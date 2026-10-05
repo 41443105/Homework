@@ -178,35 +178,61 @@ Microsoft Visual Studio Code C/C++
 ```cpp
 #include <iostream>
 #include <string>
+
 using namespace std;
 
-void pow(string A[], string s[], int i, int n, int t) {    // A[]:原集合 s[]:當前子集 i:目前處理到A[i] n:集合大小 t:當前子集大小
-    if (i == n) {
-        cout << "{";
-        for (int j = 0; j < t; j++) {
-            cout << s[j];
-            if (j != t - 1) cout << ",";
+void push(string s[], int& top, const string& v) {
+    s[top++] = v;
+}
+void pop(int& top) {
+    if (top > 0) {
+        top--;
+    }
+}
+void powerset(string A[], string s[], int& top, int i, int n, bool& r) {
+   
+    if (i == n) { // 終止條件：已考慮完全部元素
+        if (!r) {
+            cout << ", ";
         }
-        cout << "}" << endl;
+        r = false;
+
+        cout << "(";
+        for (int j = 0; j < top; j++) {//印出目前元素,當子集是空集合（top == 0）時，迴圈一次都不會執行
+            cout << s[j];
+            if (j != top - 1) cout << ", ";
+        }
+        cout << ")";
         return;
     }
-    pow(A, s, i + 1, n, t);         // 不加入當前元素 A[i]，繼續處理下一個元素
-    s[t] = A[i];                    // 加入當前元素 A[i] 到子集
-    pow(A, s, i + 1, n, t + 1);     // 繼續處理下一個元素，子集大小 t 增加 1
+    powerset(A, s, top, i + 1, n, r);// 不選取A[i]分支，繼續遞迴往下探索，直到最後碰到底部（i == n）時才會印出該完整組合
+    push(s, top, A[i]);// 選取當前元素 A[i]，使用 push 加入放進s[]
+    powerset(A, s, top, i + 1, n, r);
+    pop(top); // 使用 pop 將 A[i] 移除，復原狀態s[]變空空
 }
 
 int main() {
     int n;
-    cout << "請輸入n個數 : ";
+    cout << "請輸入集合大小 n : ";
     cin >> n;
+
     string* A = new string[n];
     string* s = new string[n];
+
+    int top = 0; //指標存一下
+
     cout << "請輸入集合元素 : ";
     for (int i = 0; i < n; i++) {
         cin >> A[i];
     }
-    cout << "集合的冪集為:" << endl;
-    pow(A, s, 0, n, 0);
+
+    cout << "S = {";
+    
+    bool r = true;
+
+    powerset(A, s, top, 0, n, r);
+    
+    cout << "}" << endl;
 
     delete[] A;
     delete[] s;
