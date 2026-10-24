@@ -228,10 +228,10 @@ ostream& operator<<(ostream& os, const Polynomial& p) {
 int main() {
     Polynomial p1, p2;
 
-    cout << "請輸入多項式 1 (項數 係數1 指數1 係數2 指數2...):" << endl;
+    cout << "請輸入多項式 1 (項數 係數1 指數1 係數2 指數2...(盡量請降冪輸入)):" << endl;
     cin >> p1;
 
-    cout << "請輸入多項式 2 (項數 係數1 指數1 係數2 指數2...):" << endl;
+    cout << "請輸入多項式 2 (項數 係數1 指數1 係數2 指數2...(盡量請降冪輸入)):" << endl;
     cin >> p2;
 
     cout << "\nP1(x) = " << p1 << endl;
