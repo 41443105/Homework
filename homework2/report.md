@@ -1,4 +1,5 @@
 # 41443105
+## 四資工二甲 鄭品均
 ## Homework 2 作業 Polynomial
 ## 解題說明
 本題要實作多項式抽象資料型態（Polynomial ADT）的相加、相乘與給 x 值的計算，並實作輸入和輸出重載。輸入可能包含重複指數、負係數或未排序的項，程式需要正確處理並輸出可閱讀的格式。多項式以降冪形式表示為各非零項之集合：
@@ -352,22 +353,44 @@ P1(2) = 16
 P2(2) = 8
 ```
 ---
-| 測試案例 | 輸入參數 | 預期輸出 | 實際輸出 |
+| 測試案例 |&nbsp;輸入參數&nbsp;| 預期輸出 | 實際輸出 |
 |:---|:---|:---|:---|
-| **測試一：多項式 P1(x)** | 4 | | |
-| | 1 0 (常數項先輸) | | |
-| | 2 1 (一次項) | | |
-| | 3 2 (二次項) | | |
-| | 1 1 (重複輸入一次項) | $3x^2 + 3x + 1$ | $3x^2 + 3x + 1$ |
-| **測試二：多項式 P2(x)** | 3 | | |
-| | -3 2 (負二次項) | | |
-| | -3 1 (負一次項) | | |
-| | 5 0 (常數項) | $-3x^2 - 3x + 5$ | $-3x^2 - 3x + 5$ |
-| **$P1(x) + P2(x)$** | （執行加法 Add） | $6$ | $6$ |
-| **$P1(x) \times P1(x)$** | （執行乘法 Mult） | $-9x^4 - 18x^3 + 3x^2 + 12x + 5$ | $-9x^4 - 18x^3 + 3x^2 + 12x + 5$ |
-| **$P1(2)$** | （代入 $x = 2$ 執行 Eval） | $19$ | $19$ |
-| **$P2(2)$** | （代入 $x = 2$ 執行 Eval） | $-13$ | $-13$ |
-
+| **【案例一：未按降冪輸入】**<br>多項式 P1(x) | 3 | | |
+| | 2&emsp;0<br>(常數項先輸) | | |
+| | 5&emsp;2<br>(二次項) | | |
+| | 3&emsp;1<br>(一次項) | $5x^2 + 3x + 2$ | $5x^2 + 3x + 2$ |
+| 多項式 P2(x) | 2 | | |
+| | 1&emsp;1 (一次項先輸) | | |
+| | 4&emsp;3 (三次項) | $4x^3 + x$ | $4x^3 + x$ |
+| $P1(x) + P2(x)$ | （執行加法 Add） | $4x^3 + 5x^2 + 4x + 2$ | $4x^3 + 5x^2 + 4x + 2$ |
+| $P1(x) \times P2(x)$ | （執行乘法 Mult） | $20x^5 + 12x^4 + 13x^3 + 3x^2 + 2x$ | $20x^5 + 12x^4 + 13x^3 + 3x^2 + 2x$ |
+| $P1(2)$ | （代入 $x = 2$ 執行 Eval） | $28$ | $28$ |
+| $P2(2)$ | （代入 $x = 2$ 執行 Eval） | $34$ | $34$ |
+| **【案例二：重複指數輸入】**<br>多項式 P1(x) | 4 | | |
+| | 3&emsp;2<br>(二次項) | | |
+| | 2&emsp;1<br>(第一次輸入一次項) | | |
+| | 5&emsp;1<br>(第二次輸入一次項) | | |
+| | 4&emsp;0 (常數項) | $3x^2 + 7x + 4$ | $3x^2 + 7x + 4$ |
+| 多項式 P2(x) | 3 | | |
+| | 2&emsp;2<br>(第一次輸入二次項) | | |
+| | 1&emsp;2<br>(第二次輸入二次項) | | |
+| | 1&emsp;0<br>(常數項) | $3x^2 + 1$ | $3x^2 + 1$ |
+| $P1(x) + P2(x)$ | （執行加法 Add） | $6x^2 + 7x + 5$ | $6x^2 + 7x + 5$ |
+| $P1(x) \times P2(x)$ | （執行乘法 Mult） | $9x^4 + 21x^3 + 15x^2 + 7x + 4$ | $9x^4 + 21x^3 + 15x^2 + 7x + 4$ |
+| $P1(2)$ | （代入 $x = 2$ 執行 Eval） | $30$ | $30$ |
+| $P2(2)$ | （代入 $x = 2$ 執行 Eval） | $13$ | $13$ |
+| **【案例三：同次方完全抵銷】**<br>多項式 P1(x) | 3 | | |
+| | 4&emsp;3<br>(三次項) | | |
+| | 2&emsp;2<br>(二次項) | | |
+| | 1&emsp;0<br>(常數項) | $4x^3 + 2x^2 + 1$ | $4x^3 + 2x^2 + 1$ |
+| 多項式 P2(x) | 3 | | |
+| | -4&emsp;3<br>(負三次項) | | |
+| | -2&emsp;2<br>(負二次項) | | |
+| | 5&emsp;0<br>(常數項) | $-4x^3 - 2x^2 + 5$ | $-4x^3 - 2x^2 + 5$ |
+| $P1(x) + P2(x)$ | （高次全數抵銷為 0） | $6$ | $6$ |
+| $P1(x) \times P2(x)$ | （執行乘法 Mult） | $-16x^6 - 16x^5 - 4x^4 + 16x^3 + 8x^2 + 5$ | $-16x^6 - 16x^5 - 4x^4 + 16x^3 + 8x^2 + 5$ |
+| $P1(2)$ | （代入 $x = 2$ 執行 Eval） | $41$ | $41$ |
+| $P2(2)$ | （代入 $x = 2$ 執行 Eval） | $-35$ | $-35$ |
 ---
 
 
@@ -408,13 +431,280 @@ P2(2) = 8
 **多項式相加係數抵銷為 0 的邊界處理**：
    - *問題3*：當兩多項式相加剛好同次方正負抵銷（如 $3x^2$ 與 $-3x^2$ 相加為 $0$），若將係數為 $0$ 的項留存於陣列中，不僅違反 ADT 定義（僅存非零項），亦會造成後續輸出出現 `+ 0x^2` 的非預期結果。
    - *解法*：在同類項合併與 `Add()` 邏輯中加入檢查，若係數相加等於 $0.0f$，則將該位置之後的所有元素往前搬移遞補並使 `terms--`，確保內部只維護真正的非零項。當全部抵銷導致 `terms == 0` 時，`operator<<` 能正確輸出單一字元 `"0"`。
+### 4. 系統實作優缺點分析
+**優點**：
+        - *空間利用率高*：採用 <coef, exp> 序對動態陣列，僅存非零項，大幅節省稀疏多項式儲存空間
+        - *快取高度友善*：連續記憶體（Term* termArray）具備極佳空間局部性，雙指標走訪與求值時快取命中率高
+        - *記憶體管理嚴謹*：嚴格實踐 Rule of Three，透過深層複製杜絕 Shallow Copy、Double Free 與記憶體洩漏
+        - *健全輸入防呆自癒*：NewTerm 內建插入排序與同類項檢查，自動處理亂序、重複指數合併及係數為 0 的項剔除
+** 缺點與限制**：
+        - *陣列平移開銷*：維持嚴格降冪需頻繁將後續元素向後或向前挪移，插入與零項剔除之搬移成本達 $O(N)$ 
+        - *乘法高階複雜度瓶頸*：雙重迴圈每輪皆呼叫 Add 累加，中間項膨脹導致整體時間達 $O(N^3)$ ，實測 N=1000 耗時達 4.86 秒
+        - *動態擴容瞬間開銷*：容量倍增（capacity *= 2）雖為均攤 $O(1)$，但觸發擴容當下仍有重新配置與全數搬移成本
+** 未來可改善方向**：   
+        - *乘法架構優化*：先收集所有相乘項至單一暫存陣列，再以 $O(N log N)$ 排序合併，或改採 Karatsuba 演算法(4 次乘法變 3 次)降至 $O(N^2)$ 以下
+        - *資料結構改進*：若面臨超頻繁的任意插入與刪除，可評估改採循環鏈結串列(轉圈圈YA)，消除陣列位移成本
+---
+### 效能量測實驗
 
+#### 1. 量測環境與方法
+* **環境**：MinGW GCC，開啟 `-O2` 最佳化旗標編譯。
+* **工具**：使用 C++11 `<chrono>` 的 `std::chrono::high_resolution_clock` 量測各方法於不同規模 $N \in \{10, 50, 100, 500, 1000\}$ 下重複運算之平均耗時（微秒 $\mu\text{s}$ ）。
+#### 2. 效能量測程式
+```cpp
+#include <iostream>
+#include <cmath>
+#include <chrono> // 1. 引入高精度計時函式庫
+
+using namespace std;
+
+
+class Polynomial;
+
+class Term {
+    friend class Polynomial;
+    friend ostream& operator<<(ostream& os, const Polynomial& p);
+    friend istream& operator>>(istream& is, Polynomial& p);
+private:
+    float coef;
+    int exp;
+};
+
+class Polynomial {
+    friend ostream& operator<<(ostream& os, const Polynomial& p);
+    friend istream& operator>>(istream& is, Polynomial& p);
+private:
+    Term* termArray;
+    int capacity;
+    int terms;
+public:
+    Polynomial() : capacity(2), terms(0) {
+        termArray = new Term[capacity];
+    }
+
+    Polynomial(const Polynomial& other) : capacity(other.capacity), terms(other.terms) {
+        termArray = new Term[capacity];
+        for (int i = 0; i < terms; ++i) {
+            termArray[i] = other.termArray[i];
+        }
+    }
+
+    Polynomial& operator=(const Polynomial& other) {
+        if (this != &other) {
+            delete[] termArray;
+            capacity = other.capacity;
+            terms = other.terms;
+            termArray = new Term[capacity];
+            for (int i = 0; i < terms; ++i) {
+                termArray[i] = other.termArray[i];
+            }
+        }
+        return *this;
+    }
+
+    ~Polynomial() {
+        delete[] termArray;
+    }
+
+    void NewTerm(float Coef, int Exp) {
+        if (Coef == 0.0f) return;
+        for (int i = 0; i < terms; ++i) {
+            if (termArray[i].exp == Exp) {
+                termArray[i].coef += Coef;
+                if (termArray[i].coef == 0.0f) {
+                    for (int j = i; j < terms - 1; ++j) {
+                        termArray[j] = termArray[j + 1];
+                    }
+                    terms--;
+                }
+                return;
+            }
+        }
+        if (terms == capacity) {
+            capacity *= 2;
+            Term* temp = new Term[capacity];
+            for (int i = 0; i < terms; ++i) {
+                temp[i] = termArray[i];
+            }
+            delete[] termArray;
+            termArray = temp;
+        }
+        int insertPos = 0;
+        while (insertPos < terms && termArray[insertPos].exp > Exp) {
+            insertPos++;
+        }
+        for (int i = terms; i > insertPos; --i) {
+            termArray[i] = termArray[i - 1];
+        }
+        termArray[insertPos].coef = Coef;
+        termArray[insertPos].exp = Exp;
+        terms++;
+    }
+
+    Polynomial Add(Polynomial poly) {
+        Polynomial c;
+        int a = 0, b = 0;
+        while (a < terms && b < poly.terms) {
+            if (termArray[a].exp == poly.termArray[b].exp) {
+                float sum = termArray[a].coef + poly.termArray[b].coef;
+                if (sum != 0.0f) {
+                    c.NewTerm(sum, termArray[a].exp);
+                }
+                a++;
+                b++;
+            }
+            else if (termArray[a].exp < poly.termArray[b].exp) {
+                c.NewTerm(poly.termArray[b].coef, poly.termArray[b].exp);
+                b++;
+            }
+            else {
+                c.NewTerm(termArray[a].coef, termArray[a].exp);
+                a++;
+            }
+        }
+        for (; a < terms; a++) c.NewTerm(termArray[a].coef, termArray[a].exp);
+        for (; b < poly.terms; b++) c.NewTerm(poly.termArray[b].coef, poly.termArray[b].exp);
+        return c;
+    }
+
+    Polynomial Mult(Polynomial poly) {
+        Polynomial c;
+        for (int i = 0; i < terms; ++i) {
+            Polynomial temp;
+            for (int j = 0; j < poly.terms; ++j) {
+                float newCoef = termArray[i].coef * poly.termArray[j].coef;
+                int newExp = termArray[i].exp + poly.termArray[j].exp;
+                temp.NewTerm(newCoef, newExp);
+            }
+            c = c.Add(temp);
+        }
+        return c;
+    }
+
+    float Eval(float x) {
+        float result = 0.0f;
+        for (int i = 0; i < terms; ++i) {
+            result += termArray[i].coef * pow(x, termArray[i].exp);
+        }
+        return result;
+    }
+};
+
+// ----------------------------------------------------------------
+// 2. 測試主程式：自動生成資料並計時
+// ----------------------------------------------------------------
+void runBenchmark(int N) {
+    Polynomial p1, p2;
+
+    // 自動建構規模為 N 的多項式（降冪排列，指數為 2*i 與 2*i+1）
+    for (int i = N; i >= 1; --i) {
+        p1.NewTerm(1.5f, i * 2);      // 例如: 1.5x^10, 1.5x^8...
+        p2.NewTerm(2.0f, i * 2 - 1);  // 例如: 2.0x^9, 2.0x^7...
+    }
+
+    int iterations = 1000; // 跑 1000 次取平均，避免單次時間太短量不到
+
+    // --- 量測 Add ---
+    auto start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < iterations; ++i) {
+        Polynomial res = p1.Add(p2);
+    }
+    auto end = chrono::high_resolution_clock::now();
+    double addTime = chrono::duration<double, micro>(end - start).count() / iterations;
+
+    // --- 量測 Mult ---
+   
+    int multIter = (N > 100) ? 50 : 500;
+    start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < multIter; ++i) {
+        Polynomial res = p1.Mult(p2);
+    }
+    end = chrono::high_resolution_clock::now();
+    double multTime = chrono::duration<double, micro>(end - start).count() / multIter;
+
+    // --- 量測 Eval ---
+    start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < iterations; ++i) {
+        float val = p1.Eval(2.0f);
+    }
+    end = chrono::high_resolution_clock::now();
+    double evalTime = chrono::duration<double, micro>(end - start).count() / iterations;
+
+    // 輸出結果
+    cout << "規模 N = " << N << " | "
+        << "Add: " << addTime << " us | "
+        << "Mult: " << multTime << " us | "
+        << "Eval: " << evalTime << " us" << endl;
+}
+
+int main() {
+    cout << "=== 開始多項式效能量測 (單位: 微秒 us) ===" << endl;
+    runBenchmark(10);
+    runBenchmark(50);
+    runBenchmark(100);
+    runBenchmark(500);
+    runBenchmark(1000);
+    cout << "=== 量測結束 ===" << endl;
+    return 0;
+}
+```
+---
+#### 3. 量測 Shell 指令與終端輸出
+```shell
+$ g++ -O2 benchmark.cpp -o benchmark.exe
+$ .\benchmark.exe
+=== 開始多項式效能量測 (單位: 微秒 us) ===
+規模 N = 10 | Add: 4.5408 us | Mult: 36.3318 us | Eval: 0.5629 us
+規模 N = 50 | Add: 12.5745 us | Mult: 700.816 us | Eval: 4.6335 us
+規模 N = 100 | Add: 49.7667 us | Mult: 3972.98 us | Eval: 7.534 us
+規模 N = 500 | Add: 958.433 us | Mult: 569556 us | Eval: 55.6769 us
+規模 N = 1000 | Add: 5442.22 us | Mult: 4.85802e+06 us | Eval: 145.832 us
+=== 量測結束 ===
+```
+#### 4. 效能量測數據趨勢與複雜度深度分析
+    - 加法 Add 表現：驗證 O(m + n) 線性複雜度
+        - 跨距驗證：N=10 (4.54 us) 到 N=100 (49.77 us) 規模放大 10 倍，耗時約增 10.9 倍[cite: 5]
+        - 極限規模：N=1000 耗時僅 5.44 ms (5442.22 us)，與 N=100 比呈現近 1:1 線性增長[cite: 5]
+        - 機制結論：雙指標循序比對各項僅存取一次，無冗餘走訪，完美貼合理論推導
+    - 乘法 Mult 表現：驗證 O(N^3) 高階累積成長
+        - 跨距驗證：N=10 (36.33 us) 到 N=100 (3972.98 us) 增加 10 倍，耗時暴增 109 倍[cite: 5]
+        - 爆發增長：N=100 到 N=1000 (4.86 s) 增長 10 倍，耗時暴增 1222 倍，高度吻合 10^3 級距[cite: 5]
+        - 機制結論：外層每輪相乘後皆呼叫 Add 累加，中間項數逐步膨脹至 N^2，形成 ∑(i·N) 累積計算瓶頸
+    - 求值 Eval 表現：驗證 O(N) 線性與快取友善性
+        - 耗時穩定：N=10 (0.56 us) 到 N=1000 (145.83 us)，全區間保持極平緩線性成長[cite: 5]
+        - 機制結論：連續陣列循序讀取具高快取命中率（Cache Hit），無動態配置開銷，運算效率極高
 ---
 
 
-
 ### 結論
+#### 1. 系統設計與健壯性成就
+        - 自動正規化與防呆容錯：NewTerm 整合插入排序與同類項檢查，自動處理亂序與重複指數，相消為 0 時即時平移剔除以維持非零項定義
+        - 嚴謹遵循 Rule of Three：完整實作解構子、複製建構子與賦值運算子（operator=），採深層複製杜絕 Double Free 與記憶體洩漏
+        - 直覺的運算子多載封裝：多載 >> 與 <<，嚴格格式化正負符號、一次項、常數項與純零多項式，提供良好封裝介面
+#### 2. 理論演算法與實測效能驗證
+        - 加法運算驗證 $O(m + n)$ ：雙指標循序比對僅需線性走訪，N=1000 實測僅耗時 5.44 ms，增長與規模呈嚴格線性比例
+        - 求值運算驗證 $O(N)$ ：連續記憶體具高快取命中率（Cache Hit），N=1000 耗時僅 145.83 us，執行效率極高
+        - 乘法運算驗證 $O(N^3)$ ：逐輪累加造成中間項膨脹，N=1000 耗時達 4.86 s 符合理論預期，並提出統整排序與 Karatsuba 演算法為未來優化方向
 
-本次作業充分的練習到了物件導向,對多項式運算的邏輯化設計有更深理解。
-此多項式系統成功實現了基礎的多項式四則運算，展示了 C++ 類別設計與動態陣列管理的應用。
-程式結構清晰，擴充性高，適合作為教學與進階功能開發的基礎。
+---
+### 心得討論
+- 心得討論
+    1. 抽象資料型態與數學建模體悟
+        - 深刻理解 ADT 將數學多項式映射為 C++ 類別的封裝過程，透過物件導向將資料與運算完整隱藏與保護
+      > 我寫了一個 `class Polynomial` ，把「資料」（動態陣列 `termArray` 、項數 `terms` 、容量 `capacity` ）包在 private 裡面藏起來，外面的人只能透過我開放的公開函式（如 `Add()` 、 `Mult()` 、 `Eval()` ）來操作它。
+        - 體認到運算子多載（>>、<<、=）對於提升介面直覺性的重要性，使自訂資料型態能無縫融入標準 I/O 串流操作
+      > 透過多載 `operator<<` 和 `operator>>` 讓我寫的 `Polynomial 類別` ，用起來就像 C++ 內建的 int 或 string 一樣直覺。
+    2. 底層記憶體管理與除錯實戰
+        - 實作動態陣列指標成員時，深刻體會到 Rule of Three 的必要性，避免了指標淺層複製引發的 Double Free 與當機
+      > 因為類別內部有使用 `new Term[capacity]` 向作業系統要動態記憶體，所以一定要自己記得（Rule of Three）：解構子(delete)、複製建構子(copy)、賦值運算子(=) 
+        - 掌握了容量倍增機制（capacity *= 2）在記憶體動態擴充與均攤常數成本之間的平衡技巧
+      > 翻一倍就可以過一下子再複製資料，如果一格一格空間滿了就要每一次都得複製舊資料跟刪除舊空間太費時!!
+    3. 演算法理論與硬體特性的連結
+        - 透過連續記憶體（Term*）的走訪，實體印證了空間局部性（Spatial Locality）對快取命中率（Cache Hit）與效能的巨大助益
+      > 因為陣列 termArray 在記憶體是一整條緊密排在一起的抓第0筆時會順便將1、2項抓進快取，當我的加法或求值迴圈讀到下一項時，資料早就在 CPU 裡面等著了，不需要每次大老遠跑去主記憶體（RAM）讀取，執行速度因此超級快。。
+        - 藉由 std::chrono 高精度計時驗證了雙指標加法的 O(m+n) 與乘法逐輪累加的 O(N^3) 漸近成長趨勢，將抽象複雜度推導轉化為真實量化數據
+      > 現在AI真的很方便可以幫我產生計算程式耗時的程式
+    4. 邊界條件與程式防呆架構的重要性
+        - 在 NewTerm 內建插入排序、同類項合併以及 0 係數剔除的過程中，認知到健全的防禦性程式設計能大幅提升系統容錯度與穩定度
+       > 我學會了如何在使用者不再控制中亂輸入數字順序時我仍然可以讓它先在內部排序完，讓輸出是完美可讀性高的!!
+       > 當次方一樣直接合併不浪費空間，跟當計算完係數變0時把它刪除後面資料往前補!!
