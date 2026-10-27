@@ -31,7 +31,7 @@ $$p(x) = a_0 x^{e_0} + a_1 x^{e_1} + \dots + a_n x^{e_n}$$
 
 ### IDE:
 Microsoft Visual Studio Code C/C++
-
+> 檔案名稱:Polynomial.cpp
 ```cpp
 #include <iostream>
 #include <cmath>
@@ -459,6 +459,7 @@ P2(2) = 8
 * **環境**：MinGW GCC，開啟 `-O2` 最佳化旗標編譯。
 * **工具**：使用 C++11 `<chrono>` 的 `std::chrono::high_resolution_clock` 量測各方法於不同規模 $N \in \{10, 50, 100, 500, 1000\}$ 下重複運算之平均耗時（微秒 $\mu\text{s}$ ）。
 ### 2. 效能量測程式
+> 檔案名稱:test.cpp
 ```cpp
 #include <iostream>
 #include <cmath>
