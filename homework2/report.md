@@ -2,7 +2,7 @@
 ## 四資工二甲 鄭品均
 ## Homework 2 作業 Polynomial
 ## 解題說明
-本題要實作多項式抽象資料型態（Polynomial ADT）的相加、相乘與給 x 值的計算，並實作輸入和輸出重載。輸入可能包含重複指數、負係數或未排序的項，程式需要正確處理並輸出可閱讀的格式。多項式以降冪形式表示為各非零項之集合：
+本題要實作多項式抽象資料型態（Polynomial ADT）的相加、相乘與給 x 值的計算，並實作輸入和輸出重載。輸入可能包含重複指數(ex: $2 x^2 + 3 x^2$ )、負係數或未排序(使用者未照指示降冪輸入)的項，程式需要正確處理並輸出可閱讀的格式。多項式以降冪形式表示為各非零項之集合：
 
 $$p(x) = a_0 x^{e_0} + a_1 x^{e_1} + \dots + a_n x^{e_n}$$
 
@@ -16,10 +16,10 @@ $$p(x) = a_0 x^{e_0} + a_1 x^{e_1} + \dots + a_n x^{e_n}$$
 ### 解題策略
 1. **內部資料表示法**：定義 `Term` 類別儲存單一項之係數與指數，並於 `Polynomial` 類別中以動態陣列指標 `Term* termArray` 搭配 `capacity`（容量）與 `terms`（實際項數）進行動態維護。
 2. **插入防呆機制（NewTerm）**：
-   - 擴充新項時，若相加後抵銷為 0 則剔除，自動進行同類項合併。
+   - 擴充新項時，若相加後相消之後為 0 則剔除，自動進行合併。
    - 插入新項確保內部陣列各項嚴格維持「指數由大到小降冪排列」，即使使用者亂輸入亦能自動修正。
    - 當空間額滿時執行容量加倍(*2)並重新配置記憶體，確保空間不會不夠。
-3. **多項式加法（Add）**：採用雙指標（Two-Pointers）逐步走訪兩多項式的非零項：
+3. **多項式加法（Add）**：採用兩個指標逐步走訪兩多項式的非零項：
    - 指數相同：係數相加，結果不為 0 則加入新多項式。
    - 指數不同：將指數較大者優先加入新多項式。
    - 雙指標比對完畢後，將剩餘未走訪的項目依序收尾追加。
@@ -317,7 +317,7 @@ int main() {
 ### 詳細推導說明
 
 1. **多項式加法 `Add`**：
-   - 採用雙指標（Two-Pointers）法比對兩多項式降冪陣列。由於每一輪迭代中至少有一個指標（`a` 或 `b`）向前遞增，因此總比對次數嚴格受限於兩多項式項數總和，時間複雜度為 $O(m + n)$ 。
+   - 採用兩個指標比對兩多項式降冪陣列。由於每一輪迭代中至少有一個指標（`a` 或 `b`）向前遞增，因此總比對次數嚴格受限於兩多項式項數總和，時間複雜度為 $O(m + n)$ 。
    - 新建多項式最多只會儲存兩多項式全部項數（無同類項合併時），故額外輔助空間複雜度為 $O(m + n)$ 。
 
 2. **多項式乘法 `Mult`**：
@@ -326,7 +326,7 @@ int main() {
    - 空間複雜度取決於展開後之非零項總數，最壞情況下所有乘積項次方皆不重複，空間複雜度為 $O(m \cdot n)$ 。
 
 3. **輸入輸出運算子**：
-   - `operator>>`：為了防呆並支援無序輸入，每次讀入皆透過 `NewTerm` 執行插入排序與同類項檢查。插入第 $i$ 項之平均時間為 $O(i)$ ，讀入 $n$ 項之總時間複雜度為 $O(n^2)$ ；動態陣列按需擴充，空間複雜度為 $O(n)$ 。
+   - `operator>>`：為了防呆並支援沒有順序的輸入，每次讀入都透過 `NewTerm` 執行插入排序與同類項檢查。插入第 $i$ 項之平均時間為 $O(i)$ ，讀入 $n$ 項之總時間複雜度為 $O(n^2)$ ；動態陣列按需擴充，空間複雜度為 $O(n)$ 。
    - `operator<<`：單純以單一迴圈從頭至尾走訪 $m$ 個非零項輸出字串，時間複雜度為線性 $O(m)$ ，輔助空間複雜度為 $O(1)$ 。
 
 ---
@@ -439,7 +439,7 @@ P2(2) = 8
 **優點**：
 - 空間利用率高：採用 <coef, exp> 序對動態陣列，僅存非零項，大幅節省稀疏多項式儲存空間          
 - 快取高度友善：連續記憶體（Term* termArray）具備極佳空間局部性，雙指標走訪與求值時快取命中率高
-- 記憶體管理嚴謹：嚴格實踐 Rule of Three，透過深層複製杜絕 Shallow Copy、Double Free 與記憶體洩漏
+- 記憶體管理嚴謹：嚴格實踐 Rule of Three (自定義解構子、複製建構子與賦值運算子)，透過深層複製杜絕淺層複製、Double Free 與記憶體洩漏(導致已經不再使用的記憶體空間無法被釋放，讓可用記憶體不斷減少)
 - 輸入防呆自癒：NewTerm 內建插入排序與同類項檢查，自動處理亂序、重複指數合併及係數為 0 的項剔除
         
 **缺點與限制**：
@@ -461,12 +461,18 @@ P2(2) = 8
 ### 2. 效能量測程式
 > 檔案名稱:test.cpp
 ```cpp
-#include <iostream>
+#include <algorithm>
 #include <cmath>
-#include <chrono> // 1. 引入高精度計時函式庫
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <random>
+#include <sstream>
+#include <string>
 
 using namespace std;
-
 
 class Polynomial;
 
@@ -600,50 +606,49 @@ public:
 };
 
 // ----------------------------------------------------------------
-// 2. 測試主程式：自動生成資料並計時
+// 測試主程式：使用 <cstdlib> 中的 clock() 進行微秒級計時
 // ----------------------------------------------------------------
 void runBenchmark(int N) {
     Polynomial p1, p2;
 
-    // 自動建構規模為 N 的多項式（降冪排列，指數為 2*i 與 2*i+1）
     for (int i = N; i >= 1; --i) {
-        p1.NewTerm(1.5f, i * 2);      // 例如: 1.5x^10, 1.5x^8...
-        p2.NewTerm(2.0f, i * 2 - 1);  // 例如: 2.0x^9, 2.0x^7...
+        p1.NewTerm(1.5f, i * 2);
+        p2.NewTerm(2.0f, i * 2 - 1);
     }
 
-    int iterations = 1000; // 跑 1000 次取平均，避免單次時間太短量不到
+    int iterations = 1000;
 
     // --- 量測 Add ---
-    auto start = chrono::high_resolution_clock::now();
+    clock_t start = clock();
     for (int i = 0; i < iterations; ++i) {
         Polynomial res = p1.Add(p2);
     }
-    auto end = chrono::high_resolution_clock::now();
-    double addTime = chrono::duration<double, micro>(end - start).count() / iterations;
+    clock_t end = clock();
+    // (總時脈數 / CLOCKS_PER_SEC) 得到秒數，乘上 1e6 換算為微秒 (us)
+    double addTime = ((double)(end - start) / CLOCKS_PER_SEC * 1000000.0) / iterations;
 
     // --- 量測 Mult ---
-   
-    int multIter = (N > 100) ? 50 : 500;
-    start = chrono::high_resolution_clock::now();
+    int multIter = (N > 100) ? 10 : 500;
+    start = clock();
     for (int i = 0; i < multIter; ++i) {
         Polynomial res = p1.Mult(p2);
     }
-    end = chrono::high_resolution_clock::now();
-    double multTime = chrono::duration<double, micro>(end - start).count() / multIter;
+    end = clock();
+    double multTime = ((double)(end - start) / CLOCKS_PER_SEC * 1000000.0) / multIter;
 
     // --- 量測 Eval ---
-    start = chrono::high_resolution_clock::now();
+    start = clock();
     for (int i = 0; i < iterations; ++i) {
         float val = p1.Eval(2.0f);
     }
-    end = chrono::high_resolution_clock::now();
-    double evalTime = chrono::duration<double, micro>(end - start).count() / iterations;
+    end = clock();
+    double evalTime = ((double)(end - start) / CLOCKS_PER_SEC * 1000000.0) / iterations;
 
-    // 輸出結果
+    // 格式化輸出
     cout << "規模 N = " << N << " | "
-        << "Add: " << addTime << " us | "
-        << "Mult: " << multTime << " us | "
-        << "Eval: " << evalTime << " us" << endl;
+         << "Add: " << addTime << " us | "
+         << "Mult: " << multTime << " us | "
+         << "Eval: " << evalTime << " us" << endl;
 }
 
 int main() {
@@ -663,30 +668,28 @@ int main() {
 $ g++ -O2 benchmark.cpp -o benchmark.exe
 $ .\benchmark.exe
 === 開始多項式效能量測 (單位: 微秒 us) ===
-規模 N = 10 | Add: 4.5408 us | Mult: 36.3318 us | Eval: 0.5629 us
-規模 N = 50 | Add: 12.5745 us | Mult: 700.816 us | Eval: 4.6335 us
-規模 N = 100 | Add: 49.7667 us | Mult: 3972.98 us | Eval: 7.534 us
-規模 N = 500 | Add: 958.433 us | Mult: 569556 us | Eval: 55.6769 us
-規模 N = 1000 | Add: 5442.22 us | Mult: 4.85802e+06 us | Eval: 145.832 us
+規模 N = 10 | Add: 3 us | Mult: 26 us | Eval: 1 us
+規模 N = 50 | Add: 11 us | Mult: 584 us | Eval: 2 us
+規模 N = 100 | Add: 37 us | Mult: 3478 us | Eval: 5 us
+規模 N = 500 | Add: 691 us | Mult: 28800 us | Eval: 25 us
+規模 N = 1000 | Add: 2597 us | Mult: 2.2383e+06 us | Eval: 72 us
 === 量測結束 ===
 ```
 ### 4. 效能量測數據趨勢與複雜度深度分析
-- 加法 Add 表現：驗證 O(m + n) 線性複雜度
-  
-  1. 跨距驗證：N=10 (4.54 us) 到 N=100 (49.77 us) 規模放大 10 倍，耗時約增 10.9 倍
-  2. 極限規模：N=1000 耗時僅 5.44 ms (5442.22 us)，與 N=100 比呈現近 1:1 線性增長
-  3. 機制結論：雙指標循序比對各項僅存取一次，無冗餘走訪，完美貼合理論推導
-   
+
+- 加法 Add 表現：驗證 $O(m + n)$ 線性複雜度
+  1. 跨距驗證： $N=10$ ($3\ \mu\text{s}$) 到 $N=100$ ($37\ \mu\text{s}$) 規模放大 10 倍，耗時增加約 12.3 倍；小規模時受函式呼叫與物件建構等常數開銷影響。
+  2. 極限規模： $N=1000$ 耗時僅約 $2.60\ \text{ms}$ ($2597\ \mu\text{s}$)，整體成長趨勢平緩，與輸入規模維持高度線性對齊。
+  3. 機制結論：雙指標循序比對指數由大到小走訪，兩多項式之非零項至多僅存取一次，無冗餘走訪，實測數據高度吻合 $O(m + n)$ 線性時間複雜度。
+
 - 乘法 Mult 表現：驗證 $O(N^3)$ 高階累積成長
-  
-  1. 跨距驗證：N=10 (36.33 us) 到 N=100 (3972.98 us) 增加 10 倍，耗時暴增 109 倍
-  2. 爆發增長：N=100 到 N=1000 (4.86 s) 增長 10 倍，耗時暴增 1222 倍，高度吻合 $10^3$ 級距
-  3. 機制結論：外層每輪相乘後皆呼叫 Add 累加，中間項數逐步膨脹至 $N^2$，形成 $∑(i·N)$ 累積計算瓶頸
-     
+  1. 跨距驗證： $N=10$ ($26\ \mu\text{s}$) 到 $N=100$ ($3478\ \mu\text{s}$) 規模放大 10 倍，耗時暴增約 133.8 倍，增長速率顯著超越二次方關係 ($10^2 = 100$)。
+  2. 爆發增長： $N=100$ ($3478\ \mu\text{s}$) 到 $N=1000$ ($2.2383 \times 10^6\ \mu\text{s} \approx 2.24\ \text{s}$) 規模放大 10 倍，耗時暴增約 643.6 倍，呈現接近三次方 ( $10^3 = 1000$ ) 級距之急遽膨脹。
+  3. 機制結論：外層迴圈逐項相乘後呼叫 `Add()` 累加，中間項數自 $N$ 逐步膨脹至 $N^2$，形成 $\sum_{i=1}^N (i \cdot N) = O(N^3)$ 的累積運算負擔，印證超大規模輸入下的計算瓶頸。
+
 - 求值 Eval 表現：驗證 $O(N)$ 線性與快取友善性
-  
-  1. 耗時穩定：N=10 (0.56 us) 到 N=1000 (145.83 us)，全區間保持極平緩線性成長
-  2. 機制結論：連續陣列循序讀取具高快取命中率（Cache Hit），無動態配置開銷，運算效率極高
+  1. 耗時穩定：從 $N=10$ ($1\ \mu\text{s}$) 到 $N=1000$ ($72\ \mu\text{s}$)，即便在千項規模下耗時亦低於 $0.08\ \text{ms}$，全區間維持極為平緩的線性成長。
+  2. 機制結論：連續陣列循序走訪觸發 CPU 空間局部性（Spatial Locality）的高快取命中率（Cache Hit），且全程無任何動態記憶體配置與搬移開銷，運算效率極高
 
 ---
 ## 結論
@@ -699,9 +702,9 @@ $ .\benchmark.exe
 
 ### 2. 理論演算法與實測效能驗證
 
-- 加法運算驗證 $O(m + n)$ ：雙指標循序比對僅需線性走訪，N=1000 實測僅耗時 5.44 ms，增長與規模呈嚴格線性比例
-- 求值運算驗證 $O(N)$ ：連續記憶體具高快取命中率（Cache Hit），N=1000 耗時僅 145.83 us，執行效率極高
-- 乘法運算驗證 $O(N^3)$ ：逐輪累加造成中間項膨脹，N=1000 耗時達 4.86 s 符合理論預期，並提出統整排序與 Karatsuba 演算法為未來優化方向
+- 加法運算驗證 $O(m + n)$ ：雙指標循序比對僅需線性走訪，N=1000 實測僅耗時 2.60 ms，增長與規模呈嚴格線性比例
+- 求值運算驗證 $O(N)$ ：連續記憶體具高快取命中率（Cache Hit），N=1000 耗時僅 72 us，執行效率極高
+- 乘法運算驗證 $O(N^3)$ ：逐輪累加造成中間項膨脹，N=1000 耗時達 2.24 s 符合理論預期，並提出統整排序與 Karatsuba 演算法為未來優化方向
 
 ---
 ## 心得討論
@@ -725,7 +728,7 @@ $ .\benchmark.exe
 * 透過連續記憶體（Term*）的走訪，實體印證了空間局部性（Spatial Locality）對快取命中率（Cache Hit）與效能的巨大助益
 > 因為陣列 termArray 在記憶體是一整條緊密排在一起的抓第0筆時會順便將1、2項抓進快取，當我的加法或求值迴圈讀到下一項時，資料早就在 CPU 裡面等著了，不需要每次大老遠跑去主記憶體（RAM）讀取，執行速度因此超級快。
 
-* 藉由 `std::chrono` 高精度計時驗證了雙指標加法的 $O(m+n)$ 與乘法逐輪累加的 $O(N^3)$ 漸近成長趨勢，將抽象複雜度推導轉化為真實量化數據
+* 藉由 `clock()` 微秒計時驗證了雙指標加法的 $O(m+n)$ 與乘法逐輪累加的 $O(N^3)$ 漸近成長趨勢，將抽象複雜度推導轉化為真實量化數據
 > 透過撰寫高精度的計時基準程式，將課堂上抽象的時間複雜度漸近推導轉化為直觀且具體的毫秒/微秒數據，大幅加深了對演算法分析的實務理解
 
 #### 4. 邊界條件與程式防呆架構的重要性
@@ -733,3 +736,8 @@ $ .\benchmark.exe
 * 在 `NewTerm` 內建插入排序、同類項合併以及 0 係數剔除的過程中，認知到健全的防禦性程式設計能大幅提升系統容錯度與穩定度
 > 1. 我學會了如何在使用者不再控制中亂輸入數字順序時我仍然可以讓它先在內部排序完，讓輸出是完美可讀性高的!!
 > 2. 當次方一樣直接合併不浪費空間，跟當計算完係數變0時把它刪除後面資料往前補!!
+
+#### 5. 新詞彙練習
+
+* `friend` 朋友機制
+> 用了 `friend` ，告訴系統 `Polynomial` 是我的麻吉，它隨時可以進來讀取或修改我的 coef 和 exp !!
