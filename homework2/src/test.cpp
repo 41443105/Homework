@@ -1,4 +1,3 @@
-```cpp
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -61,6 +60,13 @@ public:
 
     void NewTerm(float Coef, int Exp) {
         if (Coef == 0.0f) return;
+
+        // 防呆：指數不能為負數
+        if (Exp < 0) {
+            cout << "[錯誤] 指數不能為負數 (" << Exp << ")，該項已被略過！" << endl;
+            return;
+        }
+
         for (int i = 0; i < terms; ++i) {
             if (termArray[i].exp == Exp) {
                 termArray[i].coef += Coef;
@@ -73,6 +79,7 @@ public:
                 return;
             }
         }
+
         if (terms == capacity) {
             capacity *= 2;
             Term* temp = new Term[capacity];
@@ -82,6 +89,7 @@ public:
             delete[] termArray;
             termArray = temp;
         }
+
         int insertPos = 0;
         while (insertPos < terms && termArray[insertPos].exp > Exp) {
             insertPos++;
@@ -162,7 +170,6 @@ void runBenchmark(int N) {
         Polynomial res = p1.Add(p2);
     }
     clock_t end = clock();
-    // (總時脈數 / CLOCKS_PER_SEC) 得到秒數，乘上 1e6 換算為微秒 (us)
     double addTime = ((double)(end - start) / CLOCKS_PER_SEC * 1000000.0) / iterations;
 
     // --- 量測 Mult ---
