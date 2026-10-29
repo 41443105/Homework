@@ -174,7 +174,8 @@ istream& operator>>(istream& is, Polynomial& p) {
         // 【輸入時即時檢查】
         if (e < 0) {
             cout << "[輸入錯誤] 指數不能為負數 (" << e << ")，該項不予加入！" << endl;
-        } else {
+        }
+        else {
             p.NewTerm(c, e);
         }
     }
