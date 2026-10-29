@@ -1,9 +1,16 @@
-#include <iostream>
+```cpp
+#include <algorithm>
 #include <cmath>
-#include <chrono> // 1. 引入高精度計時函式庫
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <random>
+#include <sstream>
+#include <string>
 
 using namespace std;
-
 
 class Polynomial;
 
@@ -137,50 +144,49 @@ public:
 };
 
 // ----------------------------------------------------------------
-// 2. 測試主程式：自動生成資料並計時
+// 測試主程式：使用 <cstdlib> 中的 clock() 進行微秒級計時
 // ----------------------------------------------------------------
 void runBenchmark(int N) {
     Polynomial p1, p2;
 
-    // 自動建構規模為 N 的多項式（降冪排列，指數為 2*i 與 2*i+1）
     for (int i = N; i >= 1; --i) {
-        p1.NewTerm(1.5f, i * 2);      // 例如: 1.5x^10, 1.5x^8...
-        p2.NewTerm(2.0f, i * 2 - 1);  // 例如: 2.0x^9, 2.0x^7...
+        p1.NewTerm(1.5f, i * 2);
+        p2.NewTerm(2.0f, i * 2 - 1);
     }
 
-    int iterations = 1000; // 跑 1000 次取平均，避免單次時間太短量不到
+    int iterations = 1000;
 
     // --- 量測 Add ---
-    auto start = chrono::high_resolution_clock::now();
+    clock_t start = clock();
     for (int i = 0; i < iterations; ++i) {
         Polynomial res = p1.Add(p2);
     }
-    auto end = chrono::high_resolution_clock::now();
-    double addTime = chrono::duration<double, micro>(end - start).count() / iterations;
+    clock_t end = clock();
+    // (總時脈數 / CLOCKS_PER_SEC) 得到秒數，乘上 1e6 換算為微秒 (us)
+    double addTime = ((double)(end - start) / CLOCKS_PER_SEC * 1000000.0) / iterations;
 
     // --- 量測 Mult ---
-    // (如果 N 太大，Mult 跑 1000 次會很久，可以自動縮減次數)
-    int multIter = (N > 100) ? 50 : 500;
-    start = chrono::high_resolution_clock::now();
+    int multIter = (N > 100) ? 10 : 500;
+    start = clock();
     for (int i = 0; i < multIter; ++i) {
         Polynomial res = p1.Mult(p2);
     }
-    end = chrono::high_resolution_clock::now();
-    double multTime = chrono::duration<double, micro>(end - start).count() / multIter;
+    end = clock();
+    double multTime = ((double)(end - start) / CLOCKS_PER_SEC * 1000000.0) / multIter;
 
     // --- 量測 Eval ---
-    start = chrono::high_resolution_clock::now();
+    start = clock();
     for (int i = 0; i < iterations; ++i) {
         float val = p1.Eval(2.0f);
     }
-    end = chrono::high_resolution_clock::now();
-    double evalTime = chrono::duration<double, micro>(end - start).count() / iterations;
+    end = clock();
+    double evalTime = ((double)(end - start) / CLOCKS_PER_SEC * 1000000.0) / iterations;
 
-    // 輸出結果
+    // 格式化輸出
     cout << "規模 N = " << N << " | "
-        << "Add: " << addTime << " us | "
-        << "Mult: " << multTime << " us | "
-        << "Eval: " << evalTime << " us" << endl;
+         << "Add: " << addTime << " us | "
+         << "Mult: " << multTime << " us | "
+         << "Eval: " << evalTime << " us" << endl;
 }
 
 int main() {
