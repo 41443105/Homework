@@ -322,8 +322,8 @@ int main() {
 ## 測試與驗證
 
 ```shell
-$ g++ main.cpp -o main.exe
-$ .\main.exe
+$ g++ Polynomial.cpp -o Polynomial.exe
+$ .\Polynomial.exe
 請輸入多項式 1 (項數 係數1 指數1 係數2 指數2...(盡量請降冪輸入):
 2 3 2 2 1
 請輸入多項式 2 (項數 係數1 指數1 係數2 指數2...(盡量請降冪輸入)):
