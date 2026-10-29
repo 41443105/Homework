@@ -677,7 +677,7 @@ int main() {
 ### 3. 量測 Shell 指令與終端輸出
 > $N$ 代表項數
 ```shell
-$ g++ -O2 benchmark.cpp -o benchmark.exe
+$ g++ -O2 test.cpp -o test.exe
 $ .\benchmark.exe
 === 開始多項式效能量測 (單位: 微秒 us) ===
 規模 N = 10 | Add: 3 us | Mult: 26 us | Eval: 1 us
