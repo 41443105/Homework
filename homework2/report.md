@@ -674,6 +674,7 @@ int main() {
 ```
 ---
 ### 3. 量測 Shell 指令與終端輸出
+> $N$ 代表項數
 ```shell
 $ g++ -O2 benchmark.cpp -o benchmark.exe
 $ .\benchmark.exe
